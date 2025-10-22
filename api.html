@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Help</title>
+    <!-- jquery -->
+    <script src="./file/jquery-3.6.0.js"></script>
+    <script type="text/javascript" src="./file/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/jquery-ui.css">    
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="./file/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="./file/bootstrap.min.css">
+    <script src="./file/bootstrap.min.js"></script>
+    <!-- bootstrap-table -->
+    <link rel="stylesheet" href="./file/bootstrap-table.min.css">
+    <script src="./file/bootstrap-table.min.js"></script>
+    <!-- bootstrap-select -->
+    <script type="text/javascript" src="./file/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/bootstrap-select.min.css">
+    <!-- dataTables -->
+    <script type="text/javascript" src="./file/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/jquery.dataTables.min.css">
+    <script type="text/javascript" src="./file/dataTables.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/dataTables.dataTables.css">     
+    <link rel="stylesheet" href="./file/table.css">
+    <!-- chart -->
+    <script type="text/javascript" src="./file/echarts.min.js"></script>
+    <!-- 为了布局后加的 -->
+    <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+    <!-- 我自己的 -->
+    <script type="text/javascript" src="table_pie.js"></script>
+    <script type="text/javascript" src="table_bar.js"></script>
+</head>
+
+<style>
+  body{
+    background-color: #dcd2c6;
+  }
+  nav{
+    font-size: 20px;
+  }
+  .navbar-brand{
+    font-size: 1.4em;
+    color: #800020;
+  }
+  .navbar-fixed-top{
+    background-color: #EEECE7!important;
+  } 
+  main{
+    width: 80%;
+    margin: 90px auto;
+    padding: 10px 20px 40px 20px;
+    background-color: #fff;
+    border:2px solid;
+    border-radius:5px;
+    box-shadow: 3px 3px 1px 1px #292c33;
+  }
+</style>
+
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <span class="navbar-brand" style=""><b>StructRMDB</b></span>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>  
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-database" ></i> RNAstructure <b class="caret"></b></a>
+            <ul class="dropdown-menu nav-sub" style="width: auto;">
+              <li><a href="table.html?modification=m6A&species=Arabidopsis_Thaliana&software=RNAstructure"> N6-methyladenosine (m<sup>6</sup>A) </a></li>
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-database" ></i> ViennaRNA <b class="caret"></b></a>
+            <ul class="dropdown-menu nav-sub" style="width: auto;">
+              <li><a href="table.html?modification=m6A&species=Arabidopsis_Thaliana&software=vienna"> N6-methyladenosine (m<sup>6</sup>A) </a></li>
+              <li role="separator" class="divider" style="padding:0px;margin:0px" ></li>
+              <li><a href="table.html?modification=PSI&species=Homo_sapiens&software=vienna"> Pseudouridine (Ψ) </a></li>
+              <li role="separator" class="divider" style="padding:0px;margin:0px" ></li>
+              <li><a href="table.html?modification=ATOI&species=Homo_sapiens&software=vienna"> Adenosine-to-inosine (A-to-I) </a></li>
+            </ul>
+          </li>
+          <li><a href="download.html" ><i class="fa fa-cloud-download" aria-hidden="true"></i> Download</a></li>
+          <li><a href="api.html" ><i class="fa fa-bars" aria-hidden="true"></i> API</a></li>
+          <li><a href="help.html" ><i class="fa fa-question-circle" aria-hidden="true"></i> Help</a></li>
+          <li><a href="contact.html" ><i class="fa fa-envelope" aria-hidden="true"></i> Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div style="margin: 20px;"> 
+    <span style="font-size: 30px;"><b>API</b></span><span style="font-size: 20px;color:#808080;">&nbsp<b>application program interface</b></span>
+      <p class="text-justify">
+        This set of APIs was made to let our users reach the information they wanted in a new pragmatical way. 
+      </p>
+      <table id="specification" class="table">
+        <thead>
+          <tr>
+            <th>parameter</th>
+            <th>description</th>
+            <th>example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>&species=</th>
+            <th>*essential parameter.</th>
+            <th><code>curl <a href="http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna" target="_blank">'http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna'</a> > Homo_sapiens_m6a_vienna.txt</code></th>
+          </tr>
+          <tr>
+            <th>&modification=</th>
+            <th>*essential parameter.[m6A,PSI,ATOI]</th>
+            <th><code>curl <a href="http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna" target="_blank">'http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna'</a> > Homo_sapiens_m6a_vienna.txt</code></th>
+          </tr>
+          <tr>
+            <th>&software=</th>
+            <th>*essential parameter.[vienna,RNAstructure]</th>
+            <th><code>curl <a href="http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna" target="_blank">'http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna'</a> > Homo_sapiens_m6a_vienna.txt</code></th>
+          </tr>
+          <!-- DB -->
+          <tr>
+            <th>&gene_region=</th>
+            <th>filters by the Gene Region, only for m7GDB [3' UTR, 5' UTR, Exon, Intron, Downstream, Distal]</th>
+            <th><code>curl <a href="http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna&gene_region=Exon" target="_blank">'http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna&gene_region=Exon'</a> > Homo_sapiens_m6a_vienna.txt</code></th>
+          </tr>
+          <tr>
+            <th>&StructRM_ID=</th>
+            <th>filters by the StructRM ID. </th>
+            <th><code>curl <a href="http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna&StructRM_ID=m6A_hg38_StruRM_vienna_521875" target="_blank">'http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna&StructRM_ID=m6A_hg38_StruRM_vienna_521875'</a> > Homo_sapiens_m6a_vienna.txt</code></th>
+          </tr>
+          <tr>
+            <th>&ID=</th>
+            <th>filters by the ID. </th>
+            <th><code>curl <a href="http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna&ID=m6A_hg38_10" target="_blank">'http://www.rnamd.org/StructRMDB/api.php?species=Homo_sapiens&modification=m6A&software=vienna&ID=m6A_hg38_10'</a> > Homo_sapiens_m6a_vienna.txt</code></th>
+          </tr>    
+        </tbody>
+      </table><br/>
+      <!-- 说明 -->
+      <div> <br/>
+        <span style="font-size: 22px;">Download :</span>
+        <ul>
+          <li>In data page, right-click or Ctrl+S could save data as json format.</li>
+          <li>The curl command can be used to download data directly in terminal.</li>
+          <li>We support up to 10000 pieces of data display and download. If you would like a larger dataset, please use Download.</li>
+        </ul>
+      </div>        
+    </div>
+  </main>
+</body>
+
+<footer>
+  <br><br><br><br>
+	<nav class="navbar navbar-inverse navbar-bottom" style="background-color:#dcd2c6; border:0px">
+		<div class="container">
+			<div style="text-align:center; font-size:16px; margin-top:20px ">
+			  <strong>StructRMDB &copy; The Meng Lab (2024). All Rights Reserved</strong>
+			</div>
+		</div>
+	</nav>
+</footer>
+
+</html>

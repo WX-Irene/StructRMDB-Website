@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>StructRMDB</title>
+    <!-- jquery -->
+    <script src="./file/jquery-3.6.0.js"></script>
+    <script type="text/javascript" src="./file/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/jquery-ui.css">    
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="./file/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="./file/bootstrap.min.css">
+    <script src="./file/bootstrap.min.js"></script>
+    <!-- bootstrap-table -->
+    <link rel="stylesheet" href="./file/bootstrap-table.min.css">
+    <script src="./file/bootstrap-table.min.js"></script>
+    <!-- bootstrap-select -->
+    <script type="text/javascript" src="./file/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/bootstrap-select.min.css">
+    <!-- dataTables -->
+    <script type="text/javascript" src="./file/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/jquery.dataTables.min.css">
+    <script type="text/javascript" src="./file/dataTables.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/dataTables.dataTables.css">     
+    <link rel="stylesheet" href="./file/table.css">
+    <!-- chart -->
+    <script type="text/javascript" src="./file/echarts.min.js"></script>
+    <!-- 为了布局后加的 -->
+    <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+    <!-- 我自己的 -->
+    <script type="text/javascript" src="table_pie.js"></script>
+    <script type="text/javascript" src="table_bar.js"></script>
+</head>
+
+<style>
+  body{
+    background-color: #dcd2c6;
+  }
+  /*导航栏*/
+  nav{
+    font-size: 20px;
+  }
+  .navbar-brand{
+    font-size: 1.4em;
+    color: #800020;
+  }
+  .navbar-fixed-top{
+    background-color: #EEECE7!important;
+  } 
+  main{
+    width: 80%;
+    margin: 90px auto;
+    padding: 10px 20px 40px 20px;
+    background-color: #fff;
+    border:2px solid;
+    border-radius:5px;
+    box-shadow: 3px 3px 1px 1px #292c33;
+  }
+  .selectbox{
+    margin-bottom: 8px;
+  }
+  .reset {
+    float: right; 
+    margin-top: -3px; 
+    color: #800020; 
+    font-size: 25px; 
+    -webkit-text-stroke: 1px #fff;
+  }
+  /*datatable 的processing被挡住，让datatable显示在底层*/
+  #example_processing { 
+    z-index: 1000;
+  }
+  .btn:focus, .btn:active, .btn:focus:active{
+    outline:0;
+  }
+  .dropdown-menu {
+    width: 100%;
+  } 
+</style>
+
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <span class="navbar-brand" style=""><b>StructRMDB</b></span>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>  
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-database" ></i> RNAstructure <b class="caret"></b></a>
+            <ul class="dropdown-menu nav-sub" style="width: auto;">
+              <li><a href="table.html?modification=m6A&species=Arabidopsis_Thaliana&software=RNAstructure"> N6-methyladenosine (m<sup>6</sup>A) </a></li>
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-database" ></i> ViennaRNA <b class="caret"></b></a>
+            <ul class="dropdown-menu nav-sub" style="width: auto;">
+              <li><a href="table.html?modification=m6A&species=Arabidopsis_Thaliana&software=vienna"> N6-methyladenosine (m<sup>6</sup>A) </a></li>
+              <li role="separator" class="divider" style="padding:0px;margin:0px" ></li>
+              <li><a href="table.html?modification=PSI&species=Homo_sapiens&software=vienna"> Pseudouridine (Ψ) </a></li>
+              <li role="separator" class="divider" style="padding:0px;margin:0px" ></li>
+              <li><a href="table.html?modification=ATOI&species=Homo_sapiens&software=vienna"> Adenosine-to-inosine (A-to-I) </a></li>
+            </ul>
+          </li>
+          <li><a href="download.html" ><i class="fa fa-cloud-download" aria-hidden="true"></i> Download</a></li>
+          <li><a href="api.html" ><i class="fa fa-bars" aria-hidden="true"></i> API</a></li>
+          <li><a href="help.html" ><i class="fa fa-question-circle" aria-hidden="true"></i> Help</a></li>
+          <li><a href="contact.html" ><i class="fa fa-envelope" aria-hidden="true"></i> Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+	<main>
+    <h4 id="sp_md" style="background-color: #800020;color: #fff;padding: 5px;border-radius:3px;"></h4>
+    <!-- filter -->
+    <div style="overflow:auto;height:auto;display:block;">
+      <div class="selection col-md-34" style="padding: 0;">
+        <!-- selectbox -->
+        <div class="col-md-60" style="padding: 5px;border: 1px solid #dcdcdc;border-radius:5px;">
+          <div class="selectbox col-md-30">
+            <label>Species:</label>
+            <select  class="form-control" name="species" id="species">
+              <!-- <option value="Homo_sapiens">Homo sapiens</option> -->
+              <!-- <option value="Mus_musculus">Mus musculus</option> -->
+              <!-- <option value="Rattus_Norvegicus">Rattus norvegicus</option> -->
+              <!-- <option value="Arabidopsis_Thaliana">Arabidopsis thaliana</option> -->
+              <!-- <option value="Drosophila_Melanogaster">Drosophila melanogaster</option> -->
+              <!-- <option value="Saccharomyces_Cerevisiae">Saccharomyces cerevisiae</option> -->
+              <!-- <option value="Danio_Rerio">Danio rerio</option> -->
+            </select>
+          </div> 
+          <div class="selectbox col-md-30">
+            <label>RNA Type:</label>
+            <select  class="form-control" name="rt" id="rt">
+              <option value="all">All</option>
+              <option value="pre">pre-RNA</option>
+              <option value="mature">mature-RNA</option>
+            </select>
+          </div>                 
+          <div class="selectbox col-md-30">
+            <label>Classification:&nbsp;<i class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title='The degree of structural influence of the modification sites on the RNA secondary structures.10%: The site is labeled "10%" when its relative score, distance, and SMC score all individually fall within the top 10% of their respective metrics, indicating a significant impact on the secondary structure. 50%: The site is labeled "50%" when its relative score, distance, and SMC score all individually fall within the top 50% of their respective metrics, indicating a modest impact on the secondary structure. other: Sites that cause secondary structure changes but do not meet the top 10% or 50% criteria for all three metrics. No_alteration: The site cause no change in the secondary structure across any of the three metrics.' style="color: #800020;"></i></label>
+            <select name="Classification" id="Classification" class="selectpicker form-control multiselect" multiple data-live-search="true" data-actions-box="true" title="Filter by classification">
+              <option value="category LIKE '%10%'">10%</option>
+              <option value="category LIKE '%50%'">50%</option>
+              <option value="category LIKE '%other%'">Other</option>
+              <option value="category LIKE '%No_alteration%'">No_alteration</option>
+            </select>
+          </div>
+          <div class="selectbox col-md-30">
+            <label>Gene name:</label>
+            <select  name="gn" id="gn" class="selectpicker form-control multiselect" multiple  data-live-search="true" data-actions-box="true" title="Filter by gene name">
+            </select>
+          </div> 
+          <div class="selectbox col-md-30">
+            <label>Gene region:</label>
+            <select  name="gr" id="gr" class="selectpicker form-control multiselect" multiple  data-live-search="true" data-actions-box="true" title="Filter by gene type">
+              <option value="Region LIKE '%3%'" name="multiselect">3' UTR</option>
+              <option value="Region LIKE '%5%'" name="multiselect">5' UTR</option>
+              <option value="Region LIKE '%Exon%'" name="multiselect">Exon</option>
+              <option value="Region LIKE '%Intron%'" name="multiselect">Intron</option>
+            </select>
+          </div> 
+          <div class="selectbox col-md-30">
+            <label>Gene type:</label>
+            <select  name="gt" id="gt" class="selectpicker form-control multiselect" multiple  data-live-search="true" data-actions-box="true" title="Filter by gene type">
+              <option value="Bio_type LIKE '%protein_coding%'" name="multiselect">Protein Coding</option>
+              <option value="Bio_type LIKE '%lincRNA%'" name="multiselect">LincRNA</option>
+              <option value="Bio_type LIKE '%lncRNA%'" name="multiselect">LncRNA</option>
+              <option value="Bio_type LIKE '%miRNA%'" name="multiselect">miRNA</option>
+              <option value="Bio_type LIKE '%snoRNA%'" name="multiselect">snoRNA</option>
+              <option value="Bio_type LIKE '%snRNA%'" name="multiselect">snRNA</option>
+              <option value="Bio_type LIKE '%pseudogene%'" name="multiselect">Pseudogene</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-60" style="height:5px"></div>
+        <!-- scores -->
+        <div>
+          <div class="col-md-60" style="padding: 5px;border: 1px solid #dcdcdc;border-radius:5px;">
+            <div class="scores">
+              <!-- similarity -->
+              <div class="col-md-30">
+                <div>
+                  <label>Similarity score:</label>
+                  <i id="similarity_reset" class="fa fa-refresh reset" data-toggle="tooltip" data-placement="right" title="RESET"></i>
+                </div>
+                <div>
+                  <div class="col-md-24" style="padding-left: 0;">
+                    From:
+                    <input type="number" name="similarity_start" id="similarity_start" class="form-control range_input" min="-5000" max="2000" value="-5000">
+                  </div>
+                  <div class="col-md-24" style="padding-right: 0;">
+                    To:
+                    <input type="number" name="similarity_end" id="similarity_end" class="form-control range_input" min="-5000" max="2000" value="2000">
+                  </div>
+                  <div class="col-md-12">
+                    <button type="button" class="scores_go btn btn-default" style="margin-top: 20px;background-color: #800020;color: #fff;border: none;">
+                      Go!
+                    </button>
+                  </div>                    
+                </div>               
+              </div>
+              <!-- relative -->
+              <div class="col-md-30">
+                <div>
+                  <label>Relative score:</label>
+                  <i id="relative_reset" class="fa fa-refresh reset" data-toggle="tooltip" data-placement="right" title="RESET"></i>
+                </div>
+                <div>
+                  <div class="col-md-24" style="padding-left: 0;">
+                    From:
+                    <input type="number" name="relative_start" id="relative_start" class="form-control range_input" min="-4" max="1" value="-4">
+                  </div>
+                  <div class="col-md-24" style="padding-right: 0;">
+                    To:
+                    <input type="number" name="relative_end" id="relative_end" class="form-control range_input" min="-4" max="1" value="1">
+                  </div>
+                  <div class="col-md-12">
+                    <button type="button" class="scores_go btn btn-default" style="margin-top: 20px;background-color: #800020;color: #fff;border: none;">
+                      Go!
+                    </button>
+                  </div>                   
+                </div>
+              </div>
+              <!-- Distance score  -->
+              <div class="col-md-30" style="margin-top:8px">
+                <div>
+                  <label>Distance score :</label>
+                  <i id="distance_reset" class="fa fa-refresh reset" data-toggle="tooltip" data-placement="right" title="RESET"></i>
+                </div>
+                <div>
+                  <div class="col-md-24" style="padding-left: 0;">
+                    From:
+                    <input type="number" name="distance_start" id="distance_start" class="form-control range_input" min="0" max="1500" value="0">
+                  </div>
+                  <div class="col-md-24" style="padding-right: 0;">
+                    To:
+                    <input type="number" name="distance_end" id="distance_end" class="form-control range_input" min="0" max="1500" value="1500">
+                  </div> 
+                  <div class="col-md-12">
+                    <button type="button" class="scores_go btn btn-default" style="margin-top: 20px;background-color: #800020;color: #fff;border: none;">
+                      Go!
+                    </button>
+                  </div> 
+                </div>               
+              </div>
+              <!-- SMC -->
+              <div class="col-md-30" style="margin-top:8px">
+                <div>
+                  <label>SMC score:</label>
+                  <i id="smc_reset" class="fa fa-refresh reset" data-toggle="tooltip" data-placement="right" title="RESET"></i>
+                </div>
+                <div>
+                  <div class="col-md-24" style="padding-left: 0;">
+                    From:
+                    <input type="number" name="smc_start" id="smc_start" class="form-control range_input" min="0" max="10" value="0">
+                  </div>
+                  <div class="col-md-24" style="padding-right: 0;">
+                    To:
+                    <input type="number" name="smc_end" id="smc_end" class="form-control range_input" min="0" max="10" value="10">
+                  </div>   
+                  <div class="col-md-12">
+                    <button type="button" class="scores_go btn btn-default" style="margin-top: 20px;background-color: #800020;color: #fff;border: none;">
+                      Go!
+                    </button>
+                  </div>                 
+                </div>               
+              </div>
+            </div>
+            <!-- checkbox -->
+            <div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2" style="overflow:auto;height:auto;"></div>
+      <div class="figure col-md-24">
+        <div class="pie col-md-60" style="border: 1px solid #dcdcdc;border-radius:5px;padding: 5px;">
+          <div class="col-md-30" id="pie_genetype" style="height: 200px;"></div>
+          <div class="col-md-30" id="pie_rnatype" style="height: 200px;"></div> 
+        </div>
+        <div class="col-md-60" style="height:5px"></div>
+        <div class="bar col-md-60" style="border: 1px solid #dcdcdc;border-radius:5px;padding: 5px;">
+          <div class="col-md-60" id="bar_classification" style="height: 200px;">
+          </div>
+        </div>
+      </div>      
+    </div>
+    <br><br>
+    <!-- <img src="./img/loading2.gif" alt="./img/loading2.gif"> -->
+    <!-- table -->
+    <div style="overflow:auto;height:auto;"> 
+      <!-- 表格 -->
+      <div class="card" style="overflow:auto;height:auto;padding: 10px; border: 1px solid #dcdcdc;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius:5px;margin-top: 5px;">
+        <table id="example" class="table table-striped table-bordered nowrap" width="100%" style="text-align:center;white-space: nowrap">
+          <thead>
+            <tr>
+              <th><center>StructRM ID&nbsp;<i class="fa fa-question-circle" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Click a specific StructRM ID for detailed information." style="color: #800020;"></i></center></th>
+              <th><center>ID</center></th>
+              <th><center>Modification</center></th>
+              <th><center>Species</center></th>
+              <th><center>RNA Type</center></th>
+              <th><center>Chromosome</center></th>
+              <th><center>Position</center></th>
+              <th><center>Gene</center></th>
+              <th><center>Gene Region</center></th>
+              <th><center>Gene Type</center></th>
+              <th><center>Software</center></th>
+              <th><center>Classification</center></th>
+              <th><center>Similarity Score</center></th>
+              <th><center>Relative Score</center></th>
+              <th><center>Distance score </center></th>
+              <th><center>SMC score</center></th>
+              <th><center>RBP</center></th>
+              <th><center>miRNA</center></th>
+              <th><center>SNP</center></th>
+              <th><center>JBrowse</center></th>
+            </tr>
+          </thead>
+        </table>
+      </div>      
+    </div>
+	</main>
+</body>
+<!-- <span style='font-style: italic;color: #800020;'></span> -->
+<!-- footer-->
+<footer>
+  <br><br><br><br>
+	<nav class="navbar navbar-inverse navbar-bottom" style="background-color:#dcd2c6; border:0px">
+		<div class="container">
+			<div style="text-align:center; font-size:16px; margin-top:20px ">
+			  <strong>StructRMDB &copy; The Meng Lab (2024). All Rights Reserved</strong>
+			</div>
+		</div>
+	</nav>
+</footer>
+
+<script>
+  function getParams(key) {
+    var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) {
+      return unescape(r[2]);
+    }
+      return null;
+    };
+
+  function trimStr(str){return str.replace(/(\+)/g, " ");}
+
+  function GetAjaxCount(mf,sp,sw,rt,Classification,gn,gr,gt,similarity_val,relative_val,distance_val,smc_val){
+    // 初始化 ECharts 实例
+    var pieGenetypeChart = echarts.init(document.getElementById('pie_genetype'));
+    var pieRnatypeChart = echarts.init(document.getElementById('pie_rnatype'));
+    var barClassificationChart = echarts.init(document.getElementById('bar_classification'));
+
+    // 显示加载动画
+    pieGenetypeChart.showLoading();
+    pieRnatypeChart.showLoading();
+    barClassificationChart.showLoading();
+    $.ajax({
+      type: "GET",
+      url: "table_piechart.php",
+      data:{
+        "mf":mf,
+        "sp":sp,
+        "sw":sw,
+        "rt":rt,
+        "Classification":Classification,
+        "gn":gn,
+        "gr":gr,
+        "gt":gt,
+        "similarity_val":similarity_val,
+        "relative_val":relative_val,
+        "distance_val":distance_val,
+        "smc_val":smc_val
+      },
+      dataType: "json",
+      success: function(data) {
+        // Gene region
+        var region_chart_data = [];
+        var region_data = Object.values(data["region"]);
+        for(var i = 0; i < region_data.length; i++) {
+          region_chart_data[i] = new Object();
+          region_chart_data[i].name = Object.keys(data["region"])[i];;
+          region_chart_data[i].value = Object.values(data["region"])[i];
+        }
+        pieGenetypeChart.hideLoading();
+        pie_chart(pieGenetypeChart, "Gene Region", region_chart_data);
+
+        // RNA type
+        var rnatype_chart_data = [];
+        var rnatype_data = Object.values(data["RNA_type"]);
+        for(var i = 0; i < rnatype_data.length; i++) {
+          rnatype_chart_data[i] = new Object();
+          rnatype_chart_data[i].name = Object.keys(data["RNA_type"])[i];;
+          rnatype_chart_data[i].value = Object.values(data["RNA_type"])[i];
+        }
+        pieRnatypeChart.hideLoading();
+        pie_chart(pieRnatypeChart, "RNA Type", rnatype_chart_data);
+
+        // classification
+        var classification_chart_data = [];
+        var classification_data = Object.values(data["category"]);
+        for(var i = 0; i < classification_data.length; i++) {
+          classification_chart_data[i] = new Object();
+          classification_chart_data[i].name = Object.keys(data["category"])[i];;
+          classification_chart_data[i].value = Object.values(data["category"])[i];
+        }
+        barClassificationChart.hideLoading();
+        bar_chart(barClassificationChart, "Classification", classification_chart_data);
+
+      },
+      error:function(data){
+        console.log(data);
+        pieGenetypeChart.hideLoading();
+        pieRnatypeChart.hideLoading();
+        barClassificationChart.hideLoading();        
+      }
+    });
+  } 
+
+  function valuesInOptions(mf,sp,sw,rt,Classification,gn,gr,gt,similarity_val,relative_val,distance_val,smc_val){
+    $.ajax({
+      type: "GET",
+      url: "table_select.php",
+      data:{
+        "mf":mf,
+        "sp":sp,
+        "sw":sw,
+        "rt":rt,
+        "Classification":Classification,
+        "gn":gn,
+        "gr":gr,
+        "gt":gt,
+        "similarity_val":similarity_val,
+        "relative_val":relative_val,
+        "distance_val":distance_val,
+        "smc_val":smc_val
+      },
+      dataType: "json",
+      success: function(data) {
+        // gene name
+        $("#gn").find("option").remove();
+        var gn_val = Object.values(data["Gene_name_data"])
+        gn_val.sort();
+        for(var i=0;i < gn_val.length;i++){
+          $("#gn").append($('<option value=' + gn_val[i] + ' name="multiselect">' + gn_val[i] + '</option>'));
+        }
+        $("#gn").selectpicker('refresh');
+      },
+      error:function(data){
+        console.log(data);
+      }
+    });
+  }
+
+  function reclick(){ 
+    var sp = $("#species").val()
+    var rt = $("#rt").val()
+    var Classification = $("#Classification").val()
+    var gn = $("#gn").val()
+    var gr = $("#gr").val()
+    var gt = $("#gt").val()
+
+    var similarity_start = $("#similarity_start").val();
+    var similarity_end = $("#similarity_end").val();
+    var similarity_val = " AND similarity_score BETWEEN "+similarity_start+" AND "+similarity_end
+
+    var relative_start = $("#relative_start").val();
+    var relative_end = $("#relative_end").val();
+    var relative_val = " AND relative_score BETWEEN "+relative_start+" AND "+relative_end
+
+    var distance_start = $("#distance_start").val();
+    var distance_end = $("#distance_end").val();
+    var distance_val = " AND forester_distance BETWEEN "+distance_start+" AND "+distance_end
+
+    var smc_start = $("#smc_start").val();
+    var smc_end = $("#smc_end").val();
+    var smc_val = " AND smcscore BETWEEN "+smc_start+" AND "+smc_end  
+
+    var words = "Species:&nbsp;<span style='font-style: italic;color: #FFFFE0;'>"+sp+"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modification:&nbsp;<span style='font-style: italic;color: #FFFFE0;'>"+mf+"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Software:&nbsp;<span style='font-style: italic;color: #FFFFE0;'>"+sw+"</span>";
+    $("#sp_md").html(words);
+
+    GetAjaxCount(mf,sp,sw,rt,Classification,gn,gr,gt,similarity_val,relative_val,distance_val,smc_val)
+    valuesInOptions(mf,sp,sw,rt,Classification,gn,gr,gt,similarity_val,relative_val,distance_val,smc_val)
+    tab(mf,sp,sw,rt,Classification,gn,gr,gt,similarity_val,relative_val,distance_val,smc_val)
+  } 
+
+  function reclickWithoutOption(){ 
+    var sp = $("#species").val()
+    var rt = $("#rt").val()
+    var Classification = $("#Classification").val()
+    var gn = $("#gn").val()
+    var gr = $("#gr").val()
+    var gt = $("#gt").val()
+
+    var similarity_start = $("#similarity_start").val();
+    var similarity_end = $("#similarity_end").val();
+    var similarity_val = " AND similarity_score BETWEEN "+similarity_start+" AND "+similarity_end
+
+    var relative_start = $("#relative_start").val();
+    var relative_end = $("#relative_end").val();
+    var relative_val = " AND relative_score BETWEEN "+relative_start+" AND "+relative_end
+
+    var distance_start = $("#distance_start").val();
+    var distance_end = $("#distance_end").val();
+    var distance_val = " AND forester_distance BETWEEN "+distance_start+" AND "+distance_end
+
+    var smc_start = $("#smc_start").val();
+    var smc_end = $("#smc_end").val();
+    var smc_val = " AND smcscore BETWEEN "+smc_start+" AND "+smc_end  
+
+
+    GetAjaxCount(mf,sp,sw,rt,Classification,gn,gr,gt,similarity_val,relative_val,distance_val,smc_val)
+    tab(mf,sp,sw,rt,Classification,gn,gr,gt,similarity_val,relative_val,distance_val,smc_val)
+  }
+
+  function changeSpeciesOptions(){
+    $("#species").empty()
+    if (mf == "m6A") {
+      $("#species").html('<option value="Arabidopsis_Thaliana">Arabidopsis thaliana</option><option value="Homo_sapiens">Homo sapiens</option><option value="Mus_musculus">Mus musculus</option><option value="Rattus_Norvegicus">Rattus norvegicus</option><option value="Drosophila_Melanogaster">Drosophila melanogaster</option><option value="Saccharomyces_Cerevisiae">Saccharomyces cerevisiae</option><option value="Danio_Rerio">Danio rerio</option>');
+    } else if (mf == "PSI") {
+      $("#species").html('<option value="Homo_sapiens">Homo sapiens</option><option value="Mus_musculus">Mus musculus</option><option value="Rattus_Norvegicus">Rattus norvegicus</option><option value="Bos_taurus">Bos taurus</option><option value="Oryctolagus_cuniculus">Oryctolagus cuniculus</option>');
+    } else if (mf == "ATOI") {
+        $("#species").html('<option value="Homo_sapiens">Homo sapiens</option><option value="Mus_musculus">Mus musculus</option><option value="Rattus_Norvegicus">Rattus norvegicus</option>');
+    } else {
+      alert("error!")
+    }
+  }
+</script>
+
+<script>
+  //nav选择来的
+  var sp = getParams("species")
+  var mf = getParams("modification")
+  var sw = getParams("software")
+
+  changeSpeciesOptions()
+  $("#"+sp).prop('selected', true);
+
+  // 选项
+  var rt = $("#rt").val()
+  var Classification = $("#Classification").val()
+  var gn = $("#gn").val()
+  var gr = $("#gr").val()
+  var gt = $("#gt").val()
+
+  var similarity_start = $("#similarity_start").val();
+  var similarity_end = $("#similarity_end").val();
+  var similarity_val = " AND similarity_score BETWEEN "+similarity_start+" AND "+similarity_end
+
+  var relative_start = $("#relative_start").val();
+  var relative_end = $("#relative_end").val();
+  var relative_val = " AND relative_score BETWEEN "+relative_start+" AND "+relative_end
+
+  var distance_start = $("#distance_start").val();
+  var distance_end = $("#distance_end").val();
+  var distance_val = " AND forester_distance BETWEEN "+distance_start+" AND "+distance_end
+
+  var smc_start = $("#smc_start").val();
+  var smc_end = $("#smc_end").val();
+  var smc_val = " AND smcscore BETWEEN "+smc_start+" AND "+smc_end  
+
+  // 第一行的字
+  var words = "Species:&nbsp;<span style='font-style: italic;color: #FFFFE0;'>"+sp+"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modification:&nbsp;<span style='font-style: italic;color: #FFFFE0;'>"+mf+"</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Software:&nbsp;<span style='font-style: italic;color: #FFFFE0;'>"+sw+"</span>";
+  $("#sp_md").html(words);
+
+  // 点击reset，position初始化
+  $("#similarity_reset").click(function(event){
+    var similarity_start = $("#similarity_start").val("-5000");
+    var similarity_end = $("#similarity_end").val("2000");
+
+    reclick()
+  })
+  $("#relative_reset").click(function(event){
+    var relative_start = $("#relative_start").val("-4");
+    var relative_end = $("#relative_end").val("1"); 
+
+    reclick()
+  })
+  $("#distance_reset").click(function(event){
+    var distance_start = $("#distance_start").val("0");
+    var distance_end = $("#distance_end").val("1500"); 
+
+    reclick()
+  })
+  $("#smc_reset").click(function(event){
+    var smc_start = $("#smc_start").val("0");
+    var smc_end = $("#smc_end").val("10"); 
+
+    reclick()  
+  })
+  // 点击reset，旋转动画
+  $('.reset').mouseover(function() {
+    $(this).toggleClass("fa-spin");
+  });
+  $('.reset').mouseout(function() {
+    $(this).toggleClass("fa-spin");
+  });   
+
+  // 让用户不能输入大于范围的数字
+  $(document).ready(function() {
+    $('.range_input').on('input', function() {
+      const min = parseInt($(this).attr('min'));
+      const max = parseInt($(this).attr('max'));
+      let value = parseInt($(this).val());
+
+      if (value < min) {
+        $(this).val(min);
+      } else if (value > max) {
+        $(this).val(max);
+      }
+    });
+  });  
+</script>
+
+<script>
+  $(document).ready(function(){
+    $("#species").change(function(){
+      reclick()
+    })
+    $("#rt").change(function(){
+      reclick()
+    })     
+    $("#Classification").change(function(){
+      reclick()
+    })
+    $("#gn").change(function(){
+      reclickWithoutOption()
+    })
+    $("#gr").change(function(){
+      reclick()
+    })       
+    $("#gt").change(function(){
+      reclick()
+    })
+    $("#gt").change(function(){
+      reclick()
+    })
+    $(".scores_go").click(function(){
+      reclick()
+    }) 
+  })
+</script>
+
+<!-- DataTable -->
+<script language='javascript' type="text/javascript">
+  function tab(mf,sp,sw,rt,Classification,gn,gr,gt,similarity_val,relative_val,distance_val,smc_val){
+  $(document).ready(function() {
+    // $.fn.dataTable.ext.errMode = function(s,h,m){}
+    $("#example").DataTable({
+      "autoWidth":true, //是否自适应宽度
+      "destroy": true, //销毁所有符合选择的table，并且用新的options重新创建表格
+      "info" : true, //是否显示左下角信息
+      "lengthChange":true,//是否允许用户改变表格每页显示的记录数
+      "lengthMenu": [10,15,20,25], //定义在每页显示记录数的select中显示的选项
+      "paging": true, //是否开启分页
+      "processing": true, //是否显示处理状态
+      "pageLength":10,
+      "sScrollX":true, //设置水平滚动
+      "serverSide": true, //是否开启服务器模式
+      "searching": true, //是否允许datatable开启搜索
+      "hover":true,
+      columns:[
+        {data:"StruRM_ID",
+        "render": function (data, type,row){
+          return "<a  href='detail.php?ID="+data+"&species="+sp+"&modification="+mf+"&softwore="+sw+"' target=_blank >"+data+"</a>"
+        }},
+        {data:"ID"},
+        {data:"Modification"},
+        {data:"Species"},
+        {data:"RNA_type",
+        "render": function (data, type,row) {
+          if(!data){
+            return "<i class='fa fa-times-circle' style='color:#CB444B'></i>";
+          }else{
+            return data;
+          }
+        }},
+        {data:"seqnames"},
+        {data:"start"},
+        {data:"Gene_name",
+        "render": function (data, type,row) {
+          if(!data){
+            return "<i class='fa fa-times-circle' style='color:#CB444B'></i>";
+          }else{
+            return data;
+          }
+        }},
+        {data:"Region",
+        "render": function (data, type,row) {
+          if(!data){
+            return "<i class='fa fa-times-circle' style='color:#CB444B'></i>";
+          }else{
+            return data;
+          }
+        }},
+        {data:"Bio_type",
+        "render": function (data, type,row) {
+          if(!data){
+            return "<i class='fa fa-times-circle' style='color:#CB444B'></i>";
+          }else{
+            return data;
+          }
+        }},
+        {data:"Software"},
+        {data:"category"},
+        {data:"similarity_score",
+        "render": function (data, type,row) {
+          var data_r = Number(data).toFixed(3);
+          return data_r;
+        }},
+        {data:"relative_score",
+        "render": function (data, type,row) {
+          var data_r = Number(data).toFixed(3);
+          return data_r;
+        }},
+        {data:"forester_distance",
+        "render": function (data, type,row) {
+          var data_r = Number(data).toFixed(3);
+          return data_r;
+        }},
+        {data:"smcscore",
+        "render": function (data, type,row) {
+          var data_r = Number(data).toFixed(3);
+          return data_r;
+        }},
+        {data:"RBP_Num",
+        "render": function (data, type,row) {
+          if(!data){
+            return "<i class='fa fa-times-circle' style='color:#CB444B'></i>";
+          }else{
+            return data;
+          }
+        }},
+        {data:"miRNA_Num",
+        "render": function (data, type,row) {
+          if(!data){
+            return "<i class='fa fa-times-circle' style='color:#CB444B'></i>";
+          }else{
+            return data;
+          }
+        }},
+        {data:"SNP_Num",
+        "render": function (data, type,row) {
+          if(!data){
+            return "<i class='fa fa-times-circle' style='color:#CB444B'></i>";
+          }else{
+            return data;
+          }
+        }},
+        {data: 'jbrowse',
+        "render": function (data, type,row) {
+          var an="<button id='studyw' type='button' style='background-color:#964B29; border:0px' class='btn btn-primary' onclick=window.open('http://180.208.58.19/StructRMDB/"+data+"')>JBrowser</button>"
+          return an;
+        }}
+      ],
+      //隐藏列
+      "drawCallback": function(settings, json) {
+        $('li #hide').click(function (e) {
+          var index = $(this).val();
+          if  ($(this).is(':checked')){
+            $('#example').DataTable().columns(index).visible( true );
+          }else{
+            $('#example').DataTable().columns(index).visible( false);
+          }
+        });
+      },      
+      //Ajax请求服务器数据
+      ajax:{
+        url:"table.php",
+        data:{
+          "mf":mf,
+          "sp":sp,
+          "sw":sw,
+          "rt":rt,
+          "Classification":Classification,
+          "gn":gn,
+          "gr":gr,
+          "gt":gt,
+          "similarity_val":similarity_val,
+          "relative_val":relative_val,
+          "distance_val":distance_val,
+          "smc_val":smc_val
+        }
+      }
+    });
+  });
+  }
+
+  $(document).ready(function() {
+    GetAjaxCount(mf,sp,sw,rt,Classification,gn,gr,gt,similarity_val,relative_val,distance_val,smc_val)
+    valuesInOptions(mf,sp,sw,rt,Classification,gn,gr,gt,similarity_val,relative_val,distance_val,smc_val)
+    tab(mf,sp,sw,rt,Classification,gn,gr,gt,similarity_val,relative_val,distance_val,smc_val)
+  })
+</script>
+
+</html>

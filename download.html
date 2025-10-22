@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Download</title>
+    <!-- jquery -->
+    <script src="./file/jquery-3.6.0.js"></script>
+    <script type="text/javascript" src="./file/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/jquery-ui.css">    
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="./file/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="./file/bootstrap.min.css">
+    <script src="./file/bootstrap.min.js"></script>
+    <!-- bootstrap-table -->
+    <link rel="stylesheet" href="./file/bootstrap-table.min.css">
+    <script src="./file/bootstrap-table.min.js"></script>
+    <!-- bootstrap-select -->
+    <script type="text/javascript" src="./file/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/bootstrap-select.min.css">
+    <!-- dataTables -->
+    <script type="text/javascript" src="./file/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/jquery.dataTables.min.css">
+    <script type="text/javascript" src="./file/dataTables.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/dataTables.dataTables.css">     
+    <link rel="stylesheet" href="./file/table.css">
+    <!-- chart -->
+    <script type="text/javascript" src="./file/echarts.min.js"></script>
+    <!-- 为了布局后加的 -->
+    <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+    <!-- 我自己的 -->
+    <script type="text/javascript" src="table_pie.js"></script>
+    <script type="text/javascript" src="table_bar.js"></script>
+</head>
+
+<style>
+  body{
+    background-color: #dcd2c6;
+  }
+  nav{
+    font-size: 20px;
+  }
+  .navbar-brand{
+    font-size: 1.4em;
+    color: #800020;
+  }
+  .navbar-fixed-top{
+    background-color: #EEECE7!important;
+  } 
+  main{
+    width: 80%;
+    margin: 90px auto;
+    padding: 10px 20px 40px 20px;
+    background-color: #fff;
+    border:2px solid;
+    border-radius:5px;
+    box-shadow: 3px 3px 1px 1px #292c33;
+  }
+</style>
+
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <span class="navbar-brand" style=""><b>StructRMDB</b></span>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>  
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-database" ></i> RNAstructure <b class="caret"></b></a>
+            <ul class="dropdown-menu nav-sub" style="width: auto;">
+              <li><a href="table.html?modification=m6A&species=Arabidopsis_Thaliana&software=RNAstructure"> N6-methyladenosine (m<sup>6</sup>A) </a></li>
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-database" ></i> ViennaRNA <b class="caret"></b></a>
+            <ul class="dropdown-menu nav-sub" style="width: auto;">
+              <li><a href="table.html?modification=m6A&species=Arabidopsis_Thaliana&software=vienna"> N6-methyladenosine (m<sup>6</sup>A) </a></li>
+              <li role="separator" class="divider" style="padding:0px;margin:0px" ></li>
+              <li><a href="table.html?modification=PSI&species=Homo_sapiens&software=vienna"> Pseudouridine (Ψ) </a></li>
+              <li role="separator" class="divider" style="padding:0px;margin:0px" ></li>
+              <li><a href="table.html?modification=ATOI&species=Homo_sapiens&software=vienna"> Adenosine-to-inosine (A-to-I) </a></li>
+            </ul>
+          </li>
+          <li><a href="download.html" ><i class="fa fa-cloud-download" aria-hidden="true"></i> Download</a></li>
+          <li><a href="api.html" ><i class="fa fa-bars" aria-hidden="true"></i> API</a></li>
+          <li><a href="help.html" ><i class="fa fa-question-circle" aria-hidden="true"></i> Help</a></li>
+          <li><a href="contact.html" ><i class="fa fa-envelope" aria-hidden="true"></i> Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 左边栏 -->
+<!--   <div  class="sidenav" style="width:8%;margin-top:50px; margin-left:10px; position: fixed;">
+    <div  class="list-group">
+      <a id="disease_nav" class="nav list-group-item col" href="#disease" style="background-color:#800020"><font style="color:white">m7G DiseaseDB</font></a>
+      <a id="base_nav" class="nav list-group-item col" href="#base" style="background-color:#800020"><font style="color:white">m7GDB (NGS-base resolution)</font></a>
+      <a id="region_nav" class="nav list-group-item col" href="#region" style="background-color:#800020"><font style="color:white">m7GDB (NGS-m7G-region)</font></a>
+      <a id="nanopore_nav" class="nav list-group-item col" href="#nanopore" style="background-color:#800020"><font style="color:white">m7GDB (Nanopore Sequencing)</font></a>
+      <a id="techniques_nav" class="nav list-group-item col" href="#techniques" style="background-color:#800020"><font style="color:white">Different techniques</font></a>
+    </div>
+  </div> -->
+  <!-- 左边栏结束 -->
+
+  <main data-spy="scroll" data-target="#sidenav_id" data-offset="50">
+    <div>
+      <div style="font-size: 40px;margin-top: 10px;display: inline-block;float: left;"><i class="fa fa-download" aria-hidden="true" ></i> Dowland</div>
+<!--       <div style="margin-top: 20px;display: inline-block;float: right;">
+        <a class="btn" style="background-color:#800020;color: #fff;font-size:17px" href="./download/m7G_all.zip">Download All</a>
+      </div>  -->     
+    </div>
+    <div class="panel panel-success" id="disease" style="margin-top: 80px;">
+      <div class="panel-heading">
+        <h4 class="panel-title"><a id="show1" data-toggle="collapse" href="#" style="text-decoration : none">N6-methyladenosine (m6A)</a>
+        </h4>
+      </div>
+      <div id="collapse1" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <table class="table table-hover table-striped" data-pagination="true" data-page-size="5"  data-toggle="table" style="font-size:16.6px">
+            <thead>
+              <tr>
+                <th>Species</th>
+                <th>Software</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Homo sapiens</th>
+                <th>vienna</th>
+                <th><a href="./download/m6A_Homo_sapiens_vienna.csv" class="btn btn-info" download="m6A_Homo_sapiens_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>
+              <tr>
+                <th>Mus musculus</th>
+                <th>vienna</th>
+                <th><a href="./download/m6A_Mus_musculus_vienna.csv" class="btn btn-info" download="m6A_Mus_musculus_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>
+              <tr>
+                <th>Rattus norvegicus</th>
+                <th>vienna</th>
+                <th><a href="./download/m6A_Rattus_Norvegicus_vienna.csv" class="btn btn-info" download="m6A_Rattus_Norvegicus_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>
+              <tr>
+                <th>Arabidopsis thaliana</th>
+                <th>vienna</th>
+                <th><a href="./download/m6A_Arabidopsis_Thaliana_vienna.csv" class="btn btn-info" download="m6A_Arabidopsis_Thaliana_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>   
+              <tr>
+                <th>Drosophila melanogaster</th>
+                <th>vienna</th>
+                <th><a href="./download/m6A_Drosophila_Melanogaster_vienna.csv" class="btn btn-info" download="m6A_Drosophila_Melanogaster_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr> 
+              <tr>
+                <th>Saccharomyces cerevisiae</th>
+                <th>vienna</th>
+                <th><a href="./download/m6A_Saccharomyces_Cerevisiae_vienna.csv" class="btn btn-info" download="m6A_Saccharomyces_Cerevisiae_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr> 
+              <tr>
+                <th>Danio rerio</th>
+                <th>vienna</th>
+                <th><a href="./download/m6A_Danio_Rerio_vienna.csv" class="btn btn-info" download="m6A_Danio_Rerio_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr> 
+              <tr>
+                <th>Homo sapiens</th>
+                <th>RNAstructure</th>
+                <th><a href="./download/m6A_Homo_sapiens_RNAstructure.csv" class="btn btn-info" download="m6A_Homo_sapiens_RNAstructure.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr> 
+              <tr>
+                <th>Mus musculus</th>
+                <th>RNAstructure</th>
+                <th><a href="./download/m6A_Mus_musculus_RNAstructure.csv" class="btn btn-info" download="m6A_Mus_musculus_RNAstructure.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr> 
+              <tr>
+                <th>Rattus norvegicus</th>
+                <th>RNAstructure</th>
+                <th><a href="./download/m6A_Rattus_Norvegicus_RNAstructure.csv" class="btn btn-info" download="m6A_Rattus_Norvegicus_RNAstructure.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr> 
+              <tr>
+                <th>Arabidopsis Thaliana</th>
+                <th>RNAstructure</th>
+                <th><a href="./download/m6A_Arabidopsis_Thaliana_RNAstructure.csv" class="btn btn-info" download="m6A_Arabidopsis_Thaliana_RNAstructure.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr> 
+              <tr>
+                <th>Drosophila melanogaster</th>
+                <th>RNAstructure</th>
+                <th><a href="./download/m6A_Drosophila_Melanogaster_RNAstructure.csv" class="btn btn-info" download="m6A_Drosophila_Melanogaster_RNAstructure.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr> 
+              <tr>
+                <th>Saccharomyces cerevisiae</th>
+                <th>RNAstructure</th>
+                <th><a href="./download/m6A_Saccharomyces_Cerevisiae_RNAstructure.csv" class="btn btn-info" download="m6A_Saccharomyces_Cerevisiae_RNAstructure.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr> 
+              <tr>
+                <th>Danio rerio</th>
+                <th>RNAstructure</th>
+                <th><a href="./download/m6A_Danio_Rerio_RNAstructure.csv" class="btn btn-info" download="m6A_Danio_Rerio_RNAstructure.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>                                        
+            </tbody>
+          </table>
+        </div>
+     </div>
+    </div>    
+
+    <div class="panel panel-info" id="base">
+      <div class="panel-heading">
+        <h4 class="panel-title"><a id="show1" data-toggle="collapse" href="#" style="text-decoration : none">Pseudouridine (Psi)</a>
+        </h4>
+      </div>
+      <div id="collapse1" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <table class="table table-hover table-striped" data-pagination="true" data-page-size="5"  data-toggle="table" style="font-size:16.6px">
+            <thead>
+              <tr>
+                <th>Species</th>
+                <th>Software</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Homo sapiens</th>
+                <th>vienna</th>
+                <th><a href="./download/PSI_Homo_sapiens_vienna.csv" class="btn btn-info" download="PSI_Homo_sapiens_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>   
+              <tr>
+                <th>Mus musculus</th>
+                <th>vienna</th>
+                <th><a href="./download/PSI_Mus_musculus_vienna.csv" class="btn btn-info" download="PSI_Mus_musculus_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>
+              <tr>
+                <th>Rattus norvegicus</th>
+                <th>vienna</th>
+                <th><a href="./download/PSI_Rattus_Norvegicus_vienna.csv" class="btn btn-info" download="PSI_Rattus_Norvegicus_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>
+              <tr>
+                <th>Bos taurus</th>
+                <th>vienna</th>
+                <th><a href="./download/PSI_Bos_taurus_vienna.csv" class="btn btn-info" download="PSI_Bos_taurus_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>
+              <tr>
+                <th>Oryctolagus cuniculus</th>
+                <th>vienna</th>
+                <th><a href="./download/PSI_Oryctolagus_cuniculus_vienna.csv" class="btn btn-info" download="PSI_Oryctolagus_cuniculus_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>                                
+            </tbody>
+          </table>
+        </div>
+     </div>
+    </div> 
+
+    <div class="panel panel-warning" id="region">
+      <div class="panel-heading">
+        <h4 class="panel-title"><a id="show1" data-toggle="collapse" href="#" style="text-decoration : none">adenosine-to-inosine (A-to-I)</a>
+        </h4>
+      </div>
+      <div id="collapse1" class="panel-collapse collapse in">
+        <div class="panel-body">
+          <table class="table table-hover table-striped" data-pagination="true" data-page-size="5"  data-toggle="table" style="font-size:16.6px">
+            <thead>
+              <tr>
+                <th>Species</th>
+                <th>Software</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Homo sapiens</th>
+                <th>vienna</th>
+                <th><a href="./download/ATOI_Homo_sapiens_vienna.csv" class="btn btn-info" download="ATOI_Homo_sapiens_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>
+              <tr>
+                <th>Mus musculus</th>
+                <th>vienna</th>
+                <th><a href="./download/ATOI_Mus_musculus_vienna.csv" class="btn btn-info" download="ATOI_Mus_musculus_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>
+              <tr>
+                <th>Rattus norvegicus</th>
+                <th>vienna</th>
+                <th><a href="./download/ATOI_Rattus_Norvegicus_vienna.csv" class="btn btn-info" download="ATOI_Rattus_Norvegicus_vienna.csv" >CSV <i class="fa fa-download"></i></a></th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+     </div>
+    </div> 
+  </main>
+</body>
+
+<footer>
+  <br><br><br><br>
+	<nav class="navbar navbar-inverse navbar-bottom" style="background-color:#dcd2c6; border:0px">
+		<div class="container">
+			<div style="text-align:center; font-size:16px; margin-top:20px ">
+			  <strong>StructRMDB &copy; The Meng Lab (2024). All Rights Reserved</strong>
+			</div>
+		</div>
+	</nav>
+</footer>
+
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>StructRMDB</title>
+    <!-- jquery -->
+    <script src="./file/jquery-3.6.0.js"></script>
+    <script type="text/javascript" src="./file/jquery-ui.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/jquery-ui.css">  
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="./file/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="./file/bootstrap.min.css">
+    <script src="./file/bootstrap.min.js"></script>
+    <!-- bootstrap-select -->
+    <script type="text/javascript" src="./file/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./file/bootstrap-select.min.css">
+    <!-- chart -->
+    <script type="text/javascript" src="./file/echarts.min.js"></script>
+    <!-- 为了布局后加的 -->
+    <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+    <!-- 我自己的 -->
+    <script type="text/javascript" src="./index_chart.js"></script>
+</head>
+
+<style>
+  /*导航栏*/
+  nav{
+    font-size: 20px;
+  }
+  .navbar-brand{
+    font-size: 1.4em;
+    color: #800020;
+  }
+  .navbar-fixed-top{
+    background-color: #EEECE7!important;
+  }
+  body{
+    background-color: #dcd2c6;
+  }
+  /*主体内容*/
+  main{
+    width: 80%;
+    margin: 120px auto;
+    padding: 0 0 40px 0;
+    background-color: #fff;
+    height: auto;
+/*    border:2px solid;*/
+    border-radius:5px;
+/*    box-shadow: 3px 3px 1px 1px #66001A;*/
+  }
+  #search{
+    background-color: #800020;
+    padding: 10px 20px;
+    border-radius:5px 5px 0 0;
+  }
+  .selecter {
+    background-color: #800020;
+    color: #fff;
+    border-color:#dcd2c6;
+  }  
+  select:disabled {
+    background-color: #dcd2c6; 
+  }  
+  .footer{
+    text-align:center; 
+    font-size:16px; 
+    margin-top:20px
+  }  
+  .btn:focus, .btn:active, .btn:focus:active{
+    outline:0;
+  }
+
+</style>
+
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <span class="navbar-brand" style=""><b>StructRMDB</b></span>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>  
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-database" ></i> RNAstructure <b class="caret"></b></a>
+            <ul class="dropdown-menu nav-sub" style="width: auto;">
+              <li><a href="table.html?modification=m6A&species=Arabidopsis_Thaliana&software=RNAstructure"> N6-methyladenosine (m<sup>6</sup>A) </a></li>
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-database" ></i> ViennaRNA <b class="caret"></b></a>
+            <ul class="dropdown-menu nav-sub" style="width: auto;">
+              <li><a href="table.html?modification=m6A&species=Arabidopsis_Thaliana&software=vienna"> N6-methyladenosine (m<sup>6</sup>A) </a></li>
+              <li role="separator" class="divider" style="padding:0px;margin:0px" ></li>
+              <li><a href="table.html?modification=PSI&species=Homo_sapiens&software=vienna"> Pseudouridine (Ψ) </a></li>
+              <li role="separator" class="divider" style="padding:0px;margin:0px" ></li>
+              <li><a href="table.html?modification=ATOI&species=Homo_sapiens&software=vienna"> Adenosine-to-inosine (A-to-I) </a></li>
+            </ul>
+          </li>
+          <li><a href="download.html" ><i class="fa fa-cloud-download" aria-hidden="true"></i> Download</a></li>
+          <li><a href="api.html" ><i class="fa fa-bars" aria-hidden="true"></i> API</a></li>
+          <li><a href="help.html" ><i class="fa fa-question-circle" aria-hidden="true"></i> Help</a></li>
+          <li><a href="contact.html" ><i class="fa fa-envelope" aria-hidden="true"></i> Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+	<main>
+    <div id='search'>
+      <center>
+        <h1 style="color: #fff;"><b>Welcome to StructRMDB !</b></h1>
+      </center>
+      <br>
+<!--       <form id="sub" role="form" method="get" onsubmit="return check();">
+        <div class="row" style="overflow:auto;height:auto;">
+          <div class="col-md-15"></div>
+          <div class="col-md-30">
+            <div class="row">
+              <div class="row col-md-60">
+                <div class="col-md-20" style="padding-left: 0;">
+                  <select class="selecter show-tick form-control" id="select_species" data-style="btn-warning" data-dropup-auto="false">
+                    <option value="Homo_sapiens">Homo sapiens</option>
+                    <option value="Mus_musculus">Mus musculus</option>
+                    <option value="Rattus_Norvegicus" selected>Rattus norvegicus</option>
+                    <option value="Arabidopsis_Thaliana">Arabidopsis thaliana</option>
+                    <option value="Drosophila_Melanogaster">Drosophila melanogaster</option>
+                    <option value="Saccharomyces_Cerevisiae">Saccharomyces cerevisiae</option>
+                    <option value="Danio_Rerio">Danio rerio</option>
+                  </select>
+                </div>
+                <div class="col-md-20">
+                  <select class="selecter show-tick form-control" id="select_modifications" data-style="btn-warning" data-dropup-auto="false">
+                  <option value="m6a" selected>m<sup>6</sup>A</option>
+                   <option value="psedo">Ψ</option>
+                   <option value="atoi">A-to-I</option> 
+                  </select>
+                </div>
+                <div class="col-md-20">
+                  <select class="selecter show-tick form-control" id="select_filter" data-style="btn-warning" data-dropup-auto="false">
+                    <option value="gene" selected>Gene</option>
+                    <option value="region">Region</option>
+                    <option value="ensemblID">Ensembl ID</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row col-md-60" style="margin-top: 10px;padding-right: 0;">
+                <div class="col-md-50" style="padding: 0;">
+                  <input class="form-control input-xxlarge" id="autocomplete" placeholder="Please select a type and enter your keyword" name="keyword" style="height:60px;border-radius:4px 0 0 4px">
+                </div>
+                <span class="input-group-btn col-md-10" style="padding: 0;">
+                  <button class="btn success btn btn-primary btn-lg" type="submit" id="search_button" style="height:60px;background-color:#dcd2c6;border-color:#dcd2c6;width: auto;">
+                    <font style=" font-size: x-large;font-weight: bold;">GO</font>
+                  </button>
+                </span>                  
+              </div> 
+            </div>
+          </div>
+          <div class="col-md-15"></div>
+        </div>
+        <center style="margin-top: 5px;"><span style="color:#FFFACD;font-size: 16px;"> e.g., Gene (SLC35E2B),  Region (chr2:232380668..232380688) and Ensembl ID (ENSG00000227232).</span></center>
+      </form> -->
+    </div>
+    <div id="information" class="container" style="margin-top: 20px;width: 100%;">
+      <div class="col-md-30" style="border: 1px solid #dcdcdc;border-radius:5px;padding-left: 0;">
+        <img src="./img/index.png" alt="./img/index.png" style="width: 100%;">
+      </div>
+      <div class="col-md-30" style="padding-right: 0;">
+        <div style="border: 1px solid #dcdcdc;border-radius:5px;font-size: 18px;padding: 5px;">
+          <p class="text-justify">
+            Post-transcriptional RNA modifications, which are prevalent in multiple RNA families such as mRNA, rRNA and tRNA, play a significant role in various biological processes and functions through the alteration of RNA structures. With recent advancements in prediction algorithms, it is possible to predict RNA secondary structure with modified bases. In this study, we introduce StructRMDB, the first database designed to accommodate the impact of chemical modifications on RNA secondary structure. The StructRMDB comprises over 1,800,000 RNA modification site and their structural impacts, including N6-Methyladenosine (m6A), pseudouridine (Ψ), and adenosine-to-inosine editing (A-to-I) from seven species in both pre-RNA and mature RNA contexts. Two RNA secondary structure prediction tools (RNAstructure and ViennaRNA) alongside four scoring methods (Similarity score, relative score, Distance, and SMC score) were adopted to assess structural changes induced by these modifications. Additionally, we visualize RNA secondary structures with and without modification to highlight the structural alterations and provide a user-friendly graphical interface to facilitate the querying, downloading, sharing modified site evaluation results along with annotation data, and providing novel insights into the effects of RNA modifications on secondary structure.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="container" style="width: 100%;">
+      <div id="indexChart" class="container" style="height: 400px;border: 1px solid #dcdcdc;border-radius:5px;padding: 20px 10px 0 0;margin-top: 20px;width: 100%;"></div>
+    </div>
+	</main>
+</body>
+
+<!-- footer-->
+<footer>
+    <br><br><br><br>
+	<nav class="navbar navbar-inverse navbar-bottom" style="background-color:#dcd2c6; border:0px">
+		<div class="container">
+			<div class="footer">
+			  <strong>StructRMDB &copy; The Meng Lab (2024). All Rights Reserved</strong>
+			</div>
+		</div>
+	</nav>
+</footer>
+
+<script language='javascript' type="text/javascript">
+  var species = {};
+  species['Homo_sapiens'] = ['<option value="m6a" id="m6a">m6A</option>',
+  '<option value="psedo" id="psedo">psedo</option>',
+  '<option value="atoi" id="atoi">atoi</option>'];
+  species['Mus_musculus'] = ['<option value="m6a" id="m6a">m6A</option>',
+  '<option value="psedo" id="psedo">psedo</option>',
+  '<option value="atoi" id="atoi">atoi</option>'];
+  species['Rattus_Norvegicus'] = ['<option value="m6a" id="m6a">m6A</option>',
+  '<option value="psedo" id="psedo">psedo</option>',
+  '<option value="atoi" id="atoi">atoi</option>'];
+  species['Arabidopsis_Thaliana'] = ['<option value="m6a" id="m6a">m6A</option>'];
+  species['Drosophila_Melanogaster'] = ['<option value="m6a" id="m6a">m6A</option>'];
+  species['Saccharomyces_Cerevisiae'] = ['<option value="m6a" id="m6a">m6A</option>'];
+  species['Danio_Rerio'] = ['<option value="m6a" id="m6a">m6A</option>'];
+  species['Bos_taurus'] = ['<option value="psedo" id="psedo">psedo</option>'];
+  species['Oryctolagus_cuniculus'] = ['<option value="psedo" id="psedo">psedo</option>'];
+
+  var modification = {};
+  modification['m6a'] = ['<option value="Homo_sapiens" id="Homo_sapiens">Homo sapiens</option>','<option value="Mus_musculus" id="Mus_musculus">Mus musculus</option>','<option value="Rattus_Norvegicus" id="Rattus_Norvegicus">Rattus norvegicus</option>','<option value="Arabidopsis_Thaliana" id="Arabidopsis_Thaliana">Arabidopsis thaliana</option>','<option value="Drosophila_Melanogaster" id="Drosophila_Melanogaster">Drosophila melanogaster</option>','<option value="Saccharomyces_Cerevisiae" id="Saccharomyces_Cerevisiae">Saccharomyces cerevisiae</option>','<option value="Danio_Rerio" id="Danio_Rerio">Danio rerio</option>'];
+  modification['psedo'] = ['<option value="Homo_sapiens" id="Homo_sapiens">Homo sapiens</option>','<option value="Mus_musculus" id="Mus_musculus">Mus musculus</option>','<option value="Rattus_Norvegicus" id="Rattus_Norvegicus">Rattus norvegicus</option>','<option value="Bos_taurus" id="Bos_taurus">Bos taurus</option>','<option value="Oryctolagus_cuniculus" id="Oryctolagus_cuniculus">Oryctolagus cuniculus</option>'];
+  modification['atoi'] = ['<option value="Homo_sapiens" id="Homo_sapiens">Homo sapiens</option>','<option value="Mus_musculus" id="Mus_musculus">Mus musculus</option>','<option value="Rattus_Norvegicus" id="Rattus_Norvegicus">Rattus norvegicus</option>'];
+</script>
+
+<script>
+  //物种和修饰互相改变
+  function changem(){
+    var s1 = document.getElementById("select_modifications");
+    var s2 = document.getElementById("select_species");
+    var ch_sp = $("#select_species").val()
+    var ts = s1.options[s1.selectedIndex].value;
+    $("#select_species").find("option").remove();
+    var l1 = modification[ts];
+    if (l1) {
+      for (var i = 0; i < l1.length; i++) {
+        $("#select_species").append(l1[i]);
+      }
+    }
+    $("#"+ch_sp).prop('selected', true);
+  }
+
+  function changes(){
+    var s1 = document.getElementById("select_species");
+    var s2 = document.getElementById("select_modifications");
+    var ch_mf = $("#select_modifications").val()
+    var ts = s1.options[s1.selectedIndex].value;
+    $("#select_modifications").find("option").remove();
+    var l1 = species[ts];
+    if (l1) {
+      for (var i = 0; i < l1.length; i++) {
+        $("#select_modifications").append(l1[i]);
+      }
+    }
+    $("#"+ch_mf).prop('selected', true);
+  } 
+
+  function reclick(){
+    var sp = $("#select_species").val()
+    var mf = $("#select_modifications").val()
+    var type = $("#select_filter").val()
+
+    // 自动填充搜索框下拉菜单
+    $.ajax({
+      type: "GET",
+      url: "index_automenu.php",
+      data:{
+        "mf":mf,
+        "sp":sp
+      },
+      dataType: "json",
+      success: function(data) {
+        if (type == "gene") {
+          // gene name
+          var gn_val = Object.values(data["Gene_name"])
+          $( "#autocomplete" ).autocomplete({
+            delay: 0,
+            source: function(request, response) {
+            var results = $.ui.autocomplete.filter(gn_val, request.term);
+            response(results.slice(0, 10));
+            }
+          })
+        } else if (type == "ensemblID") {
+          // gene id
+          var gn_val = Object.values(data["Gene_id"])
+          $( "#autocomplete" ).autocomplete({
+            delay: 0,
+            source: function(request, response) {
+            var results = $.ui.autocomplete.filter(gn_val, request.term);
+            response(results.slice(0, 10));
+            }
+          })
+        } else if (type == "region") {
+          // gene id
+          var gn_val = Object.values(data["Region_data"])
+          $( "#autocomplete" ).autocomplete({
+            delay: 0,
+            source: function(request, response) {
+            var results = $.ui.autocomplete.filter(gn_val, request.term);
+            response(results.slice(0, 10));
+            }
+          })
+        } else {
+          console.log("autocomplete error");
+        }
+        console.log(data);
+      },
+      error:function(data){
+        console.log(data);
+      }
+    });    
+  }
+
+  $(document).ready(function(){
+    index_chart()
+
+    var sp = $("#select_species").val()
+    var mf = $("#select_modifications").val()
+    var type = $("#select_filter").val()  
+    // 自动填充搜索框下拉菜单
+    $.ajax({
+      type: "GET",
+      url: "index_automenu.php",
+      data:{
+        "mf":mf,
+        "sp":sp
+      },
+      dataType: "json",
+      success: function(data) {
+        if (type == "gene") {
+          // gene name
+          var gn_val = Object.values(data["Gene_name"])
+          $( "#autocomplete" ).autocomplete({
+            delay: 0,
+            source: function(request, response) {
+            var results = $.ui.autocomplete.filter(gn_val, request.term);
+            response(results.slice(0, 10));
+            }
+          })
+        } else if (type == "ensemblID") {
+          // gene id
+          var gn_val = Object.values(data["Gene_id"])
+          $( "#autocomplete" ).autocomplete({
+            delay: 0,
+            source: function(request, response) {
+            var results = $.ui.autocomplete.filter(gn_val, request.term);
+            response(results.slice(0, 10));
+            }
+          })
+        } else if (type == "region") {
+          // gene id
+          var gn_val = Object.values(data["Region_data"])
+          $( "#autocomplete" ).autocomplete({
+            delay: 0,
+            source: function(request, response) {
+            var results = $.ui.autocomplete.filter(gn_val, request.term);
+            response(results.slice(0, 10));
+            }
+          })
+        } else {
+          console.log("autocomplete error");
+        }
+        console.log(data);
+      },
+      error:function(data){
+        console.log(data);
+      }
+    });
+
+  }) 
+  $(document).ready(function(){
+    $("#select_modifications").change(function(){
+      changem()
+      reclick()
+    })
+    $("#select_species").change(function(){
+      changes()
+      reclick()
+    })
+    $("#select_filter").change(function(){
+      reclick()
+    })
+  }) 
+</script>
+
+<script>
+  //提交（检查region格式）
+  $("form").submit(function(){
+    var sp = $("#select").val();
+    var txt = $('#autocomplete').val();
+    var keyword = $.trim(txt);
+    var region_pattern = /^[A-Za-z0-9\._]+(:)[0-9]+(\.){2}[0-9]+$/g;
+    if($('#region_input').prop("checked") == true){
+      if(!region_pattern.test(keyword) && keyword != "" ){
+        alert("Please enter the correct format of the region !");
+        return false;
+      } else {
+        if ($('#autocomplete').val() == "") {
+          $('#autocomplete').val(search_region[sp]);
+        }
+      }
+    }
+    if ($('#gene_input').prop("checked") == true) {
+      if ($('#autocomplete').val() == "") {
+        $('#autocomplete').val(search_gene[sp]);
+      }      
+    }
+    if ($('#rs_input').prop("checked") == true) {
+      if ($('#autocomplete').val() == "") {
+        $('#autocomplete').val(search_rs[sp]);
+      }
+    }
+  })  
+</script>
+
+
+</html>
